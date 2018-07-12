@@ -82,3 +82,4 @@ getTimeHandler :: Maybe Text -> Handler Time
 getTimeHandler p = do
   t <- liftIO getZonedTime
   pure (Time t p)
+

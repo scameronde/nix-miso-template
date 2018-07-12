@@ -37,17 +37,23 @@ main = do
       }
 
 update' :: Action -> Model -> Effect Action Model
+
 update' NoOp m = noEff m
+
 update' (HandleURI u) m = noEff (m { modelURI = u})
+
 update' (ChangeURI u) m = m <# (pushURI u *> pure NoOp)
+
 update' (SetTime t) m =
   noEff (m { modelTime = Just t })
+
 update' RefreshTime m = m <# do
   timeOrErr <- runClientM (getTime (Just "foobar"))
   pure $ case timeOrErr of
     Left err -> SetTime (ms (show err))
     Right (Time time param) ->
       SetTime (ms (formatTime defaultTimeLocale "%H:%M:%S" time) <> fromMaybe "" param)
+
 update' (HandleWebSocket (WebSocketMessage (Message msg))) m =
   noEff (m { modelLastMessage = Just msg })
 update' (HandleWebSocket (WebSocketClose {})) m = m <# (NoOp <$ putStrLn "web socket closed")

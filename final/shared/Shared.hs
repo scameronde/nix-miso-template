@@ -34,9 +34,7 @@ import Data.Text (Text)
 type GetTimeAPI = "api" :> "time" :> QueryParam "param" Text :> Get '[JSON] Time
 
 data Time = Time ZonedTime (Maybe MisoString) deriving Generic
-
 instance ToJSON Time
-
 instance FromJSON Time
 
 data Model = Model
@@ -61,11 +59,10 @@ data Action
   | HandleWebSocket (WebSocket Message)
   deriving Show
 
-instance ToJSON Message
-instance FromJSON Message
-
 newtype Message = Message MisoString
   deriving (Eq, Show, Generic)
+instance ToJSON Message
+instance FromJSON Message
 
 viewHome :: Model -> View Action
 viewHome m =
@@ -91,3 +88,4 @@ type ClientRoutes
 
 getURI :: forall a. (HasLink a, IsElem a ClientRoutes, MkLink a ~ Link) => URI
 getURI = linkURI (safeLink (Proxy :: Proxy ClientRoutes) (Proxy :: Proxy a))
+
